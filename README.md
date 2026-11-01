@@ -1,16 +1,35 @@
-# Colibri sur une RTX 3090 (24 Go) et 64 Go de RAM
+# Colibri sur Windows
 
-Notes d'installation et d'exécution, pas un fork de Colibri. Machine : PC Windows, RTX 3090 24 Go, 62 Go de RAM utiles, SSD NVMe (Samsung 9100 PRO 2 To). Colibri v2.1.0. Mesures du 31 octobre 2026.
+Notes d'installation, pas un fork de Colibri. Deux cas :
+
+- une machine comme la tour de référence (RTX 3090 24 Go, 64 Go de RAM, SSD NVMe) : Qwen3.8-Flash-Next ;
+- un PC normal à 16 Go de RAM, carte graphique facultative : Qwen3-Coder-30B-A3B.
+
+Colibri v2.1.0 pour la tour. Le choix 16 Go vient du catalogue Colibri ([README](https://github.com/JustVugg/colibri#which-model-for-my-machine), lu le 1er novembre 2026) : en dessous de 8 Go le modèle ne démarre pas, à partir de 18 Go il tourne comme mesuré. À 16 Go il démarre, une partie des experts peut rester sur le disque. Ne pas installer Qwen3.8-Flash-Next sur 16 Go : le catalogue demande 24 Go pour qu'il démarre.
+
+Ne pas committer de clé d'API. Le serveur refuse une écoute réseau sans clé.
 
 Colibri ne demande pas que le modèle tienne entier dans le GPU. La carte garde les experts chauds, la RAM les couches communes (ou, pour Qwen, les couches denses), le SSD les experts froids.
 
 Ne pas committer de clé d'API. Le serveur refuse une écoute réseau sans clé.
 
-## Installer
+## Installer (les deux cas)
 
-1. Python 3.12 : `winget install --id Python.Python.3.12 -e --scope user`
-2. Releases GitHub de [colibri](https://github.com/JustVugg/colibri) : `colibri-v2.1.0-windows-x86_64.zip`, puis l'archive `...-windows-x86_64-cuda.zip` par-dessus. Vérifier `SHA256SUMS.txt`. Décompresser dans `C:\Users\jb\colibri`.
-3. `python -m pip install -U "huggingface_hub[hf_xet]"`
+1. Télécharger le ZIP du dépôt [colibri](https://github.com/JustVugg/colibri), le décompresser, double-cliquer sur `START-HERE.bat`. S'il manque Python, le script propose de l'installer.
+2. Avant tout téléchargement de modèle (plusieurs dizaines de Go), lancer `START-HERE.bat --list` et ne garder que ce qui tient dans la RAM et le disque.
+3. La fois suivante, `START-HERE.bat` relance sans retélécharger. `c\coli.cmd status` et `c\coli.cmd stop`.
+
+La tour de référence a été installée à la main, version épinglée, pas via `START-HERE.bat` : Python 3.12 (`winget install --id Python.Python.3.12 -e --scope user`), puis les archives `colibri-v2.1.0-windows-x86_64.zip` et `...-windows-x86_64-cuda.zip` (empreintes `SHA256SUMS.txt`) dans `C:\Users\jb\colibri`, puis `python -m pip install -U "huggingface_hub[hf_xet]"`.
+
+## PC 16 Go — Qwen3-Coder-30B-A3B
+
+Modèle de code et d'appels d'outils, sans réflexion. Identifiant : `qwen3-coder-30b`. Téléchargement 19 Go. Mesure publiée par Colibri, processeur seul, tous les experts en RAM : 8,5 à 9,6 token/s. Ce n'est pas la vitesse à attendre à 16 Go.
+
+```bat
+START-HERE.bat --model qwen3-coder-30b
+```
+
+Carte graphique facultative. Vulkan, y compris une puce intégrée, est pris en charge pour ce modèle. CUDA n'est pas nécessaire. Qwen3.6-35B-A3B (`qwen36-35b`, 23 Go, 10 / 20 Go de RAM) n'est le défaut que si `--list` le marque comme tenant « comme mesuré » ; sur 16 Go, non.
 
 ## Mistral Large 4 (« Le Chonk ») — expérience
 
