@@ -1,4 +1,6 @@
-# Local models, and frontier models
+# Colibri, an engine that gets past the RAM wall
+
+Tiny engine, immense model.
 
 French version: [README.fr.md](README.fr.md).
 

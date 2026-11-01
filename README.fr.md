@@ -1,4 +1,6 @@
-# Le local et le frontière
+# Colibri, un moteur qui dépasse le mur de la RAM
+
+Tiny engine, immense model.
 
 Version française. English: [README.md](README.md).
 
