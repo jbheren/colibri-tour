@@ -1,4 +1,43 @@
-# Colibri sur Windows
+# Le local et le frontière
+
+Session filmée depuis un portable, l'agent parle à Colibri sur un PC Windows. Le GIF reprend la vidéo telle quelle, à 4 images par seconde pour tenir dans le dépôt. Durée d'origine : 1 min 58.
+
+![Qwen écrit du Ruby via Colibri](media/qwen-colibri.gif)
+
+Je l'ai accepté : les agents entrent dans notre chaîne de travail. Cela doit se faire de manière prudente. Je ne veux pas d'une chaîne de travail qui dépende entièrement des modèles frontière hébergés.
+
+Pour l'inférence locale, le mur, c'est la mémoire. Faire tenir le modèle entier dans la RAM d'un GPU, dont les prix ont atteint les étoiles.
+
+Colibri, un moteur open source écrit en C, montre une autre voie. Il n'utilise pas le GPU de façon exclusive : la carte garde ce qui est sollicité souvent, la RAM système ce qui doit rester proche, le SSD le reste, lu à la volée. Le point d'équilibre descend. On peut se servir de la machine qu'on a déjà.
+
+Sur mon PC de bureau — une RTX 3090 (24 Go), 64 Go de RAM, un SSD NVMe — un modèle de 68 Go compressés ne tient pas dans la carte. Deux fois trop gros. Avec Colibri, un petit nouveau qui bouscule le secteur, il tourne à environ 35 token/s, et il écrit du Ruby correct, tests compris.
+
+Comment ? Ces modèles sont des Mixture of Experts : à chaque token, seule une partie des paramètres travaille. Colibri ne charge donc pas tout dans la carte. Il garde en mémoire la partie commune. Les experts restent sur le SSD, et il va chercher à la volée ceux dont il a besoin. La carte garde les plus sollicités. La RAM prend le reste de ce qui doit rester proche.
+
+Poussé au bout, le même principe fait tenir Mistral Large 4, « Le Chonk » : 1 000 milliards de paramètres, 233 Go même compressé à l'extrême. Là, la RAM ne suffit plus. Le SSD devient la mémoire. 0,8 token/s, 16 secondes avant que la réponse commence. À ce stade, c'est une expérience, pas un outil. Le simple fait que ce soit possible est déjà une prouesse.
+
+Si le poste de travail local continue d'exister, je pense que notre chaîne de travail sera un mix de modèles locaux et cloud. Les raisons sont multiples, et elles ne motivent pas les mêmes acteurs. Les développeurs veulent pouvoir utiliser leurs outils sans limite. Les organisations cherchent la maîtrise des coûts. Les deux ont besoin de confidentialité. Le mix et le cloisonnement, c'est d'ailleurs la direction prise par Microsoft. GitHub Copilot va choisir, tâche par tâche, un modèle local ou un modèle cloud. Sur les PC Windows RTX Spark, comme le Surface Laptop Ultra, le code peut tourner sur la machine. Les commandes de l'agent passent par MXC, un bac à sable : fichiers, réseau, identifiants, sans ouvrir tout le poste.
+
+Colibri est un très bon symptôme de cette pression. La course à la RAM pour nos machines locales se heurte au mur des prix. Sur l'Apple Store français, le 1er novembre : un Mac Studio M5 Ultra (36 cœurs CPU, 80 cœurs GPU) est à 12 429 € en 256 Go, et à 25 079 € en 512 Go.
+
+Il faut trouver le bon point d'équilibre. Ce type d'outil nous permet de le faire, en ne se limitant pas à la mémoire graphique.
+
+Je partage ici mes découvertes et retours d'expérience, dans une démarche ouverte, sans prosélytisme sur l'usage des agents IA dans mes domaines.
+
+Apprendre, faire, partager.
+
+## Sources
+
+- Colibri (Apache 2.0) : https://github.com/JustVugg/colibri
+- Mistral Large 4 : https://mistral.ai/news/mistral-large-4-oss/
+- Poids compressés du Chonk (GGUF 1 bit, Unsloth) : https://unsloth.ai/docs/models/mistral-large-4
+- Qwen3.8-Flash-Next compressé (IQ2_XS) : https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF
+- Le même principe, sans carte graphique (Marco Franzon, 4 Raspberry Pi 5) : https://x.com/mfranz_on/status/2115884818734911795
+- Microsoft, modèles locaux et outils en bac à sable : https://commandline.microsoft.com/local-models-sandboxed-tools-github-windows/
+- MXC : https://github.com/microsoft/mxc
+- Prix Mac Studio : configurateur Apple Store français, 1er novembre 2026, puce 36 cœurs CPU / 80 cœurs GPU. 12 429 € en 256 Go. 512 Go affiché à + 12 650 €, soit 25 079 €.
+
+## Installation
 
 Si vous utilisez un assistant de code, il peut faire l'installation. Demandez-lui :
 
