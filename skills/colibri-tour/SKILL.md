@@ -5,7 +5,7 @@ description: Installer et démarrer Colibri sur le Windows de l'utilisateur. Cho
 
 # Installer Colibri sur ce Windows
 
-Cette page est écrite pour l'assistant à qui l'on a demandé de l'exécuter. Une personne peut la suivre aussi. Les commandes viennent de [docs/AI_SETUP.md](https://github.com/JustVugg/colibri/blob/main/docs/AI_SETUP.md). En cas de contradiction sur une commande, le fichier de Colibri gagne. La règle de choix du modèle, ici, gagne.
+Cette page est écrite pour l'assistant à qui l'on a demandé de l'exécuter. Une personne peut la suivre aussi. Installer depuis la release Windows, pas depuis un clone du dépôt source.
 
 ## Règles
 
@@ -16,9 +16,9 @@ Cette page est écrite pour l'assistant à qui l'on a demandé de l'exécuter. U
 
 ## 1. Colibri
 
-`START-HERE.bat` n'est pas dans l'archive Windows (`colibri-v*-windows-x86_64.zip`). Il n'existe que dans le code source. Sur une installation par release, le lanceur est `coli.cmd`, à côté de `colibri.exe`. Ne pas le chercher, ne pas le créer.
+Le lanceur est `coli.cmd`, à côté de `colibri.exe`.
 
-S'il y a déjà un dossier avec `coli.cmd` (souvent `C:\Users\<utilisateur>\colibri`), l'utiliser. Sinon, télécharger la dernière release Windows depuis https://github.com/JustVugg/colibri/releases, vérifier `SHA256SUMS.txt`, la décompresser, et s'y placer. Ne pas cloner le dépôt source pour installer : ce n'est pas nécessaire, et ce n'est pas là que se trouve le binaire Windows.
+S'il y a déjà un dossier avec `coli.cmd` (souvent `C:\Users\<utilisateur>\colibri`), l'utiliser. Sinon, télécharger la dernière release Windows depuis https://github.com/JustVugg/colibri/releases (`colibri-v*-windows-x86_64.zip`, et `...-cuda.zip` par-dessus s'il y a une carte Nvidia). Vérifier `SHA256SUMS.txt`, décompresser, et s'y placer.
 
 Si `py -3` manque, montrer `winget install -e --id Python.Python.3.12 --scope user` et ne le lancer qu'après un oui.
 
@@ -30,7 +30,6 @@ Depuis le dossier qui contient `coli.cmd` :
 coli.cmd setup --list --json
 ```
 
-Si cette forme échoue, la forme source est `py -3 c\coli setup --list --json`, uniquement dans un clone. Ne pas l'essayer sur une release.
 
 Lire `memory.total`. Dire à l'utilisateur le modèle retenu, sa taille, et pourquoi les autres sont écartés.
 
@@ -46,7 +45,7 @@ Montrer l'identifiant, `download_gb` et le dossier (`~/colibri-models`, ou un au
 coli.cmd setup --model qwen3-coder-30b
 ```
 
-Remplacer l'identifiant par celui retenu à l'étape 2. N'ajouter `--yes` qu'après l'accord. Dans un clone source, la même commande est `py -3 c\coli setup --model <id>`.
+Remplacer l'identifiant par celui retenu à l'étape 2. N'ajouter `--yes` qu'après l'accord.
 
 Le setup télécharge le modèle, démarre Colibri et ouvre le tableau de bord.
 
@@ -56,7 +55,7 @@ Vérifier :
 coli.cmd status
 ```
 
-Le tableau de bord est `http://127.0.0.1:8000/`. La base OpenAI est `http://127.0.0.1:8000/v1`. Pour arrêter : `py -3 c\coli stop`, ou Ctrl+C dans la fenêtre qui a démarré le serveur.
+Le tableau de bord est `http://127.0.0.1:8000/`. La base OpenAI est `http://127.0.0.1:8000/v1`. Pour arrêter : `coli.cmd stop`, ou Ctrl+C dans la fenêtre qui a démarré le serveur.
 
 La fois suivante : `coli.cmd serve --model <dossier du modèle>`, depuis le même dossier.
 

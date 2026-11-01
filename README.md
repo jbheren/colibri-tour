@@ -17,7 +17,7 @@ Colibri ne demande pas que le modèle tienne entier dans le GPU. La carte garde 
 
 ## Installer (les deux cas)
 
-1. Release Windows sur https://github.com/JustVugg/colibri/releases : `colibri-v*-windows-x86_64.zip` (et l'archive `...-cuda.zip` par-dessus s'il y a une carte Nvidia). Vérifier `SHA256SUMS.txt`. Il n'y a pas de `START-HERE.bat` dans cette archive : le lanceur est `coli.cmd`.
+1. Release Windows sur https://github.com/JustVugg/colibri/releases : `colibri-v*-windows-x86_64.zip` (et l'archive `...-cuda.zip` par-dessus s'il y a une carte Nvidia). Vérifier `SHA256SUMS.txt`. Le lanceur est `coli.cmd`.
 2. Avant tout téléchargement de modèle, `coli.cmd setup --list` et ne garder que ce qui tient.
 3. La fois suivante, `coli.cmd serve --model <dossier>`. `coli.cmd status` et `coli.cmd stop`.
 
