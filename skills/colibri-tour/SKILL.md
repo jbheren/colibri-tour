@@ -1,66 +1,65 @@
 ---
 name: colibri-tour
-description: Installer et démarrer Colibri sur le Windows de l'utilisateur. Choisir Qwen3-Coder-30B sur 16 Go de RAM, Qwen3.8-Flash-Next seulement si la machine a au moins 24 Go. Demander avant tout téléchargement.
+description: Install and start Colibri on the user's Windows machine. Choose Qwen3-Coder-30B on 16 GB of RAM, Qwen3.8-Flash-Next only if the machine has at least 24 GB. Ask before any download.
 ---
 
-# Installer Colibri sur ce Windows
+# Install Colibri on this Windows machine
 
-Cette page est écrite pour l'assistant à qui l'on a demandé de l'exécuter. Une personne peut la suivre aussi. Installer depuis la release Windows, pas depuis un clone du dépôt source.
+This page is for the assistant asked to run it. A person can follow it too. Install from the Windows release, not from a clone of the source repository.
 
-## Règles
+## Rules
 
-- Demander avant de télécharger un modèle (19 Go et plus) et avant `winget` ou tout autre paquet système.
-- Ne pas inventer de clé d'API et ne pas en écrire dans un fichier. Pour un usage local, ne pas ouvrir le port.
-- Un seul modèle servi à la fois.
-- Si une commande s'arrête, la relancer : le téléchargement reprend.
+- Ask before downloading a model (19 GB and up) and before `winget` or any other system package.
+- Do not invent an API key and do not write one into a file. For local use, do not open the port.
+- Serve one model at a time.
+- If a command stops, run it again: the download resumes.
 
 ## 1. Colibri
 
-Le lanceur est `coli.cmd`, à côté de `colibri.exe`.
+The launcher is `coli.cmd`, next to `colibri.exe`.
 
-S'il y a déjà un dossier avec `coli.cmd` (souvent `C:\Users\<utilisateur>\colibri`), l'utiliser. Sinon, télécharger la dernière release Windows depuis https://github.com/JustVugg/colibri/releases (`colibri-v*-windows-x86_64.zip`, et `...-cuda.zip` par-dessus s'il y a une carte Nvidia). Vérifier `SHA256SUMS.txt`, décompresser, et s'y placer.
+If a folder with `coli.cmd` already exists (often `C:\Users\<user>\colibri`), use it. Otherwise download the latest Windows release from https://github.com/JustVugg/colibri/releases (`colibri-v*-windows-x86_64.zip`, and `...-cuda.zip` on top if there is an Nvidia card). Check `SHA256SUMS.txt`, unzip, and work from that folder.
 
-Si `py -3` manque, montrer `winget install -e --id Python.Python.3.12 --scope user` et ne le lancer qu'après un oui.
+If `py -3` is missing, show `winget install -e --id Python.Python.3.12 --scope user` and run it only after a yes.
 
-## 2. Ce que la machine peut tenir
+## 2. What the machine can hold
 
-Depuis le dossier qui contient `coli.cmd` :
+From the folder that contains `coli.cmd`:
 
 ```powershell
 coli.cmd setup --list --json
 ```
 
+Read `memory.total`. Tell the user which model you kept, its size, and why the others were set aside.
 
-Lire `memory.total`. Dire à l'utilisateur le modèle retenu, sa taille, et pourquoi les autres sont écartés.
+- **Under 24 GB of RAM, including a 16 GB PC**: `qwen3-coder-30b` if `fits` is true. That is Qwen3-Coder-30B-A3B, about 19 GB, code and tools, no thinking. A graphics card is optional. Do not install `qwen38-flash-next` or Mistral Large 4: the catalog asks for 24 GB before Qwen3.8 starts.
+- **24 GB or more**: the model `--list` marks `recommended`, unless the user asked for Qwen3.8 and `qwen38-flash-next` has `fits` true. On a 64 GB tower with an RTX 3090, that is the useful case.
+- If `qwen3-coder-30b` has `status` `needs-ram` or `needs-disk`, do not download. Show `reason` and stop.
 
-- **Moins de 24 Go de RAM, y compris un PC à 16 Go** : `qwen3-coder-30b` si `fits` est vrai. C'est Qwen3-Coder-30B-A3B, environ 19 Go, code et outils, sans réflexion. Carte graphique facultative. Ne pas installer `qwen38-flash-next` ni Mistral Large 4 : le catalogue demande 24 Go pour que Qwen3.8 démarre.
-- **24 Go ou plus** : le modèle que `--list` marque `recommended`, sauf si l'utilisateur a demandé Qwen3.8 et que `qwen38-flash-next` a `fits` vrai. Sur une tour à 64 Go et une RTX 3090, c'est le cas utile.
-- Si `qwen3-coder-30b` a `status` `needs-ram` ou `needs-disk`, ne pas télécharger. Montrer `reason` et s'arrêter.
+## 3. Install the chosen model
 
-## 3. Installer le modèle retenu
-
-Montrer l'identifiant, `download_gb` et le dossier (`~/colibri-models`, ou un autre disque via `--dir` si l'utilisateur le dit). Attendre un oui.
+Show the id, `download_gb`, and the folder (`~/colibri-models`, or another disk via `--dir` if the user says so). Wait for a yes.
 
 ```powershell
 coli.cmd setup --model qwen3-coder-30b
 ```
 
-Remplacer l'identifiant par celui retenu à l'étape 2. N'ajouter `--yes` qu'après l'accord.
+Replace the id with the one chosen in step 2. Add `--yes` only after agreement.
 
-Le setup télécharge le modèle, démarre Colibri et ouvre le tableau de bord.
+Setup downloads the model, starts Colibri, and opens the dashboard.
 
-Vérifier :
+Check:
 
 ```powershell
 coli.cmd status
 ```
 
-Le tableau de bord est `http://127.0.0.1:8000/`. La base OpenAI est `http://127.0.0.1:8000/v1`. Pour arrêter : `coli.cmd stop`, ou Ctrl+C dans la fenêtre qui a démarré le serveur.
+The dashboard is `http://127.0.0.1:8000/`. The OpenAI base URL is `http://127.0.0.1:8000/v1`. To stop: `coli.cmd stop`, or Ctrl+C in the window that started the server.
 
-La fois suivante : `coli.cmd serve --model <dossier du modèle>`, depuis le même dossier.
+Next time: `coli.cmd serve --model <model folder>`, from the same folder.
 
-## 4. Contrôle
+## 4. Check
 
-Envoyer une requête courte au modèle annoncé par `http://127.0.0.1:8000/v1/models`. Si la réponse a un `content` vide et un `reasoning_content` rempli, avec `finish_reason` `length`, ce n'est pas une troncature du serveur : la réflexion a mangé `max_tokens`. Relancer avec `enable_thinking` à `false`, ou un plafond plus haut.
+Send a short request to the model announced by `http://127.0.0.1:8000/v1/models`. If the reply has an empty `content` and a filled `reasoning_content`, with `finish_reason` `length`, the server did not truncate on its own: thinking used up `max_tokens`. Retry with `enable_thinking` set to `false`, or a higher cap.
 
-Ne pas écouter sur le réseau (`--host 0.0.0.0`) sans une clé fournie par l'utilisateur dans la variable `COLI_API_KEY`.
+Do not listen on the network (`--host 0.0.0.0`) without a key the user put in `COLI_API_KEY`.

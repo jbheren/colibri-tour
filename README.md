@@ -1,89 +1,89 @@
-# Le local et le frontière
+# Local models, and frontier models
 
-Session filmée depuis un portable, l'agent parle à Colibri sur un PC Windows. Extrait de 12 secondes, à partir de 0:24.
+French version: [README.fr.md](README.fr.md).
 
-![Qwen écrit du Ruby via Colibri](media/qwen-colibri.gif)
+Recorded from a laptop. The agent talks to Colibri on a Windows PC. 12-second excerpt, starting at 0:24.
 
-Je l'ai accepté : les agents entrent dans notre chaîne de travail. Cela doit se faire de manière prudente. Je ne veux pas d'une chaîne de travail qui dépende entièrement des modèles frontière hébergés.
+![Qwen writing Ruby through Colibri](media/qwen-colibri.gif)
 
-Pour l'inférence locale, le mur, c'est la mémoire. Faire tenir le modèle entier dans la RAM d'un GPU, dont les prix ont atteint les étoiles.
+I have accepted it: agents are now part of the work chain. That has to happen carefully. I do not want a work chain that depends entirely on hosted frontier models.
 
-Colibri, un moteur open source écrit en C, montre une autre voie. Il n'utilise pas le GPU de façon exclusive : la carte garde ce qui est sollicité souvent, la RAM système ce qui doit rester proche, le SSD le reste, lu à la volée. Le point d'équilibre descend. On peut se servir de la machine qu'on a déjà.
+For local inference, the wall is memory. Fitting the whole model into GPU RAM, whose prices have reached the stars.
 
-Sur mon PC de bureau — une RTX 3090 (24 Go), 64 Go de RAM, un SSD NVMe — un modèle de 68 Go compressés ne tient pas dans la carte. Deux fois trop gros. Avec Colibri, un petit nouveau qui bouscule le secteur, il tourne à environ 35 token/s, et il écrit du Ruby correct, tests compris.
+Colibri, an open-source engine written in C, shows another way. It does not use the GPU exclusively: the card keeps what is used often, system RAM keeps what must stay close, and the SSD keeps the rest, read on demand. The balance point comes down. You can use the machine you already have.
 
-Comment ? Ces modèles sont des Mixture of Experts : à chaque token, seule une partie des paramètres travaille. Colibri ne charge donc pas tout dans la carte. Il garde en mémoire la partie commune. Les experts restent sur le SSD, et il va chercher à la volée ceux dont il a besoin. La carte garde les plus sollicités. La RAM prend le reste de ce qui doit rester proche.
+On my desktop — an RTX 3090 (24 GB), 64 GB of RAM, an NVMe SSD — a 68 GB compressed model does not fit on the card. Twice too big. With Colibri, a newcomer shaking up the field, it runs at about 35 token/s, and it writes correct Ruby, tests included.
 
-Poussé au bout, le même principe fait tenir Mistral Large 4, « Le Chonk » : 1 000 milliards de paramètres, 233 Go même compressé à l'extrême. Là, la RAM ne suffit plus. Le SSD devient la mémoire. 0,8 token/s, 16 secondes avant que la réponse commence. À ce stade, c'est une expérience, pas un outil. Le simple fait que ce soit possible est déjà une prouesse.
+How? These models are Mixture of Experts: at each token, only part of the parameters work. Colibri therefore does not load everything onto the card. It keeps the shared part in memory. Experts stay on the SSD, and it fetches the ones it needs on the fly. The card keeps the hottest ones. RAM takes the rest of what must stay close.
 
-Si le poste de travail local continue d'exister, je pense que notre chaîne de travail sera un mix de modèles locaux et cloud. Les raisons sont multiples, et elles ne motivent pas les mêmes acteurs. Les développeurs veulent pouvoir utiliser leurs outils sans limite. Les organisations cherchent la maîtrise des coûts. Les deux ont besoin de confidentialité. Le mix et le cloisonnement, c'est d'ailleurs la direction prise par Microsoft. GitHub Copilot va choisir, tâche par tâche, un modèle local ou un modèle cloud. Sur les PC Windows RTX Spark, comme le Surface Laptop Ultra, le code peut tourner sur la machine. Les commandes de l'agent passent par MXC, un bac à sable : fichiers, réseau, identifiants, sans ouvrir tout le poste.
+Pushed to the end, the same principle holds Mistral Large 4, "Le Chonk": 1,000 billion parameters, 233 GB even when compressed to the extreme. There, RAM is not enough. The SSD becomes the memory. 0.8 token/s, 16 seconds before the answer starts. At this stage it is an experiment, not a tool. That it is possible at all is already a feat.
 
-Colibri est un très bon symptôme de cette pression. La course à la RAM pour nos machines locales se heurte au mur des prix. Sur l'Apple Store français, le 1er novembre : un Mac Studio M5 Ultra (36 cœurs CPU, 80 cœurs GPU) est à 12 429 € en 256 Go, et à 25 079 € en 512 Go.
+If the local workstation is still here in the future, I think the work chain will be a mix of local and cloud models. The reasons are many, and they do not motivate the same people. Developers want to use their tools without a cap. Organizations want to control cost. Both need confidentiality. Mix and isolation are the direction Microsoft is taking. GitHub Copilot will choose, task by task, a local model or a cloud model. On RTX Spark Windows PCs, such as the Surface Laptop Ultra, code can run on the machine. The agent's commands go through MXC, a sandbox: files, network, credentials, without opening the whole machine.
 
-Il faut trouver le bon point d'équilibre. Ce type d'outil nous permet de le faire, en ne se limitant pas à la mémoire graphique.
+Colibri is a very good symptom of this pressure. The race for RAM on local machines hits the price wall. On the French Apple Store, 1 November: a Mac Studio M5 Ultra (36-core CPU, 80-core GPU) is €12,429 with 256 GB, and €25,079 with 512 GB.
 
-Je partage ici mes découvertes et retours d'expérience, dans une démarche ouverte, sans prosélytisme sur l'usage des agents IA dans mes domaines.
+The point is to find the right balance. This kind of tool lets us do that, without stopping at graphics memory.
 
-Apprendre, faire, partager.
+I share discoveries and field notes here, openly, without preaching about the use of AI agents in my fields.
+
+Learn, do, share.
 
 ## Sources
 
-- Colibri (Apache 2.0) : https://github.com/JustVugg/colibri
-- Mistral Large 4 : https://mistral.ai/news/mistral-large-4-oss/
-- Poids compressés du Chonk (GGUF 1 bit, Unsloth) : https://unsloth.ai/docs/models/mistral-large-4
-- Qwen3.8-Flash-Next compressé (IQ2_XS) : https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF
-- Le même principe, sans carte graphique (Marco Franzon, 4 Raspberry Pi 5) : https://x.com/mfranz_on/status/2115884818734911795
-- Microsoft, modèles locaux et outils en bac à sable : https://commandline.microsoft.com/local-models-sandboxed-tools-github-windows/
-- MXC : https://github.com/microsoft/mxc
-- Prix Mac Studio : configurateur Apple Store français, 1er novembre 2026, puce 36 cœurs CPU / 80 cœurs GPU. 12 429 € en 256 Go. 512 Go affiché à + 12 650 €, soit 25 079 €.
+- Colibri (Apache 2.0): https://github.com/JustVugg/colibri
+- Mistral Large 4: https://mistral.ai/news/mistral-large-4-oss/
+- Compressed Chonk weights (1-bit GGUF, Unsloth): https://unsloth.ai/docs/models/mistral-large-4
+- Compressed Qwen3.8-Flash-Next (IQ2_XS): https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF
+- The same idea, with no graphics card (Marco Franzon, 4 Raspberry Pi 5): https://x.com/mfranz_on/status/2115884818734911795
+- Microsoft, local models and sandboxed tools: https://commandline.microsoft.com/local-models-sandboxed-tools-github-windows/
+- MXC: https://github.com/microsoft/mxc
+- Mac Studio prices: French Apple Store configurator, 1 November 2026, 36-core CPU / 80-core GPU. €12,429 at 256 GB. 512 GB shown as + €12,650, so €25,079.
 
-## Installation
+## Install
 
-Si vous utilisez un assistant de code, il peut faire l'installation. Demandez-lui :
+If you use a coding assistant, it can do the install. Ask it:
 
-> Installe Colibri sur ce Windows en suivant https://raw.githubusercontent.com/jbheren/colibri-tour/main/skills/colibri-tour/SKILL.md
+> Install Colibri on this Windows machine by following https://raw.githubusercontent.com/jbheren/colibri-tour/main/skills/colibri-tour/SKILL.md
 
-Notes d'installation, pas un fork de Colibri. Deux cas :
+Install notes, not a fork of Colibri. Two cases:
 
-- une machine comme la tour de référence (RTX 3090 24 Go, 64 Go de RAM, SSD NVMe) : Qwen3.8-Flash-Next ;
-- un PC normal à 16 Go de RAM, carte graphique facultative : Qwen3-Coder-30B-A3B.
+- a machine like the reference tower (RTX 3090 24 GB, 64 GB of RAM, NVMe SSD): Qwen3.8-Flash-Next;
+- an ordinary PC with 16 GB of RAM, graphics card optional: Qwen3-Coder-30B-A3B.
 
-Colibri v2.1.0 pour la tour. Le choix 16 Go vient du catalogue Colibri ([README](https://github.com/JustVugg/colibri#which-model-for-my-machine), lu le 1er novembre 2026) : en dessous de 8 Go le modèle ne démarre pas, à partir de 18 Go il tourne comme mesuré. À 16 Go il démarre, une partie des experts peut rester sur le disque. Ne pas installer Qwen3.8-Flash-Next sur 16 Go : le catalogue demande 24 Go pour qu'il démarre.
+The 16 GB choice comes from the Colibri catalog ([README](https://github.com/JustVugg/colibri#which-model-for-my-machine), read on 1 November 2026): below 8 GB it does not start, from 18 GB it runs as measured. At 16 GB it starts, and some experts may stay on disk. Do not install Qwen3.8-Flash-Next on 16 GB: the catalog asks for 24 GB before it starts.
 
-Ne pas committer de clé d'API. Le serveur refuse une écoute réseau sans clé.
+Do not commit an API key. The server refuses a network bind without one.
 
-Colibri ne demande pas que le modèle tienne entier dans le GPU. La carte garde les experts chauds, la RAM les couches communes (ou, pour Qwen, les couches denses), le SSD les experts froids.
+Colibri does not need the whole model on the GPU. The card keeps hot experts, RAM keeps the shared layers (or, for Qwen, the dense layers), and the SSD keeps the cold experts.
 
-## Installer (les deux cas)
+## Install, both cases
 
-1. Release Windows sur https://github.com/JustVugg/colibri/releases : `colibri-v*-windows-x86_64.zip` (et l'archive `...-cuda.zip` par-dessus s'il y a une carte Nvidia). Vérifier `SHA256SUMS.txt`. Le lanceur est `coli.cmd`.
-2. Avant tout téléchargement de modèle, `coli.cmd setup --list` et ne garder que ce qui tient.
-3. La fois suivante, `coli.cmd serve --model <dossier>`. `coli.cmd status` et `coli.cmd stop`.
+1. Windows release from https://github.com/JustVugg/colibri/releases: `colibri-v*-windows-x86_64.zip` (and `...-cuda.zip` on top if there is an Nvidia card). Check `SHA256SUMS.txt`. The launcher is `coli.cmd`.
+2. Before any model download, `coli.cmd setup --list`, and keep only what fits.
+3. Next time, `coli.cmd serve --model <folder>`. `coli.cmd status` and `coli.cmd stop`.
 
-La tour de référence a été installée ainsi, version épinglée : Python 3.12 (`winget install --id Python.Python.3.12 -e --scope user`), puis les archives `colibri-v2.1.0-windows-x86_64.zip` et `...-windows-x86_64-cuda.zip` (empreintes `SHA256SUMS.txt`) dans `C:\Users\jb\colibri`, puis `python -m pip install -U "huggingface_hub[hf_xet]"`.
+## 16 GB PC — Qwen3-Coder-30B-A3B
 
-## PC 16 Go — Qwen3-Coder-30B-A3B
-
-Modèle de code et d'appels d'outils, sans réflexion. Identifiant : `qwen3-coder-30b`. Téléchargement 19 Go. Mesure publiée par Colibri, processeur seul, tous les experts en RAM : 8,5 à 9,6 token/s. Ce n'est pas la vitesse à attendre à 16 Go.
+Code and tool calls, no thinking. Id: `qwen3-coder-30b`. Download 19 GB. Colibri's published CPU measurement, every expert in RAM: 8.5 to 9.6 token/s. Do not expect that speed at 16 GB.
 
 ```bat
 coli.cmd setup --model qwen3-coder-30b
 ```
 
-Carte graphique facultative. Vulkan, y compris une puce intégrée, est pris en charge pour ce modèle. CUDA n'est pas nécessaire. Qwen3.6-35B-A3B (`qwen36-35b`, 23 Go, 10 / 20 Go de RAM) n'est le défaut que si `--list` le marque comme tenant « comme mesuré » ; sur 16 Go, non.
+A graphics card is optional. Vulkan, including an integrated GPU, is supported for this model. CUDA is not required. Qwen3.6-35B-A3B (`qwen36-35b`, 23 GB, 10 / 20 GB of RAM) is the default only if `--list` marks it as running as measured. On 16 GB, it does not.
 
-## Mistral Large 4 (« Le Chonk ») — expérience
+## Mistral Large 4 ("Le Chonk") — an experiment
 
-233 Go, quantification 1 bit (Unsloth `UD-IQ1_S`). Ne tient ni dans le GPU ni dans la RAM.
+233 GB, 1-bit quantization (Unsloth `UD-IQ1_S`). It fits neither in the GPU nor in RAM.
 
 ```powershell
 hf download unsloth/Mistral-Large-4-1T-A52B-GGUF --include "UD-IQ1_S/*" --local-dir C:\models\ml4
 coli.cmd import C:\models\ml4\UD-IQ1_S\Mistral-Large-4-1T-A52B-UD-IQ1_S-00001-of-00006.gguf
 ```
 
-L'import est en mode lien : pas de seconde copie.
+Import is link mode: no second copy.
 
-GPU : Colibri choisit Vulkan pour ce GGUF puis échoue (`COLI_GPU(S) requires COLI_CUDA=1`). Forcer CUDA.
+GPU: Colibri picks Vulkan for this GGUF, then fails (`COLI_GPU(S) requires COLI_CUDA=1`). Force CUDA.
 
 ```powershell
 $env:COLI_VULKAN = "0"
@@ -91,16 +91,16 @@ $env:COLI_CUDA = "1"
 coli.cmd serve --ctx 32768 --vram 16 --host 0.0.0.0 --api-key $env:COLI_API_KEY --model C:\models\ml4\UD-IQ1_S\Mistral-Large-4-1T-A52B-UD-IQ1_S.colibri
 ```
 
-- `--vram 16` : moins d'experts chauds (734 au lieu de 976). Sans ça, 32 768 tokens de contexte ont été refusés une fois le fichier d'usage grossi (56,7 Go prévus pour 51,4 disponibles).
-- `--ctx 65536` refuse de démarrer (environ 61 Go prévus). 40 960 démarre, sans marge.
-- Un seul moteur à la fois : deux instances ne tiennent pas dans la RAM.
-- `coli chat` sans serveur envoie le format de dialogue GLM. Le modèle se présente alors comme Qwen. Passer par `coli serve`, qui applique le gabarit Mistral.
+- `--vram 16`: fewer hot experts (734 instead of 976). Without it, a 32,768-token context was refused once the usage file grew (56.7 GB planned for 51.4 available).
+- `--ctx 65536` refuses to start (about 61 GB planned). 40,960 starts, with no margin.
+- One engine at a time: two instances do not fit in RAM.
+- `coli chat` without a server sends the GLM dialogue format. The model then introduces itself as Qwen. Go through `coli serve`, which applies the Mistral template.
 
-Mesure (CUDA, 36 tokens de prompt, 64 générés, sans réflexion) : 0,77 token/s, lecture du prompt 16,4 s, 41,6 Go de RAM. Ce n'est pas un outil de travail.
+Measurement (CUDA, 36 prompt tokens, 64 generated, no thinking): 0.77 token/s, 16.4 s to read the prompt, 41.6 GB of RAM. Not a work tool.
 
-## Qwen3.8-Flash-Next — le cas utile
+## Qwen3.8-Flash-Next — the useful case
 
-68 Go, `IQ2_XS` (ISTA-DASLab). Trop gros pour la 3090 seule. Tient carte + RAM.
+68 GB, `IQ2_XS` (ISTA-DASLab). Too big for the 3090 alone. Fits on card plus RAM.
 
 ```powershell
 hf download ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF --include "IQ2_XS/*" --local-dir C:\models\q38
@@ -109,11 +109,11 @@ $env:COLI_VULKAN = "1"
 coli.cmd serve --ctx 32768 --host 0.0.0.0 --api-key $env:COLI_API_KEY --model C:\models\q38\IQ2_XS\Qwen3.8-Flash-Next-GSQ-RCO-IQ2_XS.colibri
 ```
 
-Sans `COLI_VULKAN=1`, tout reste sur le processeur (8 token/s). Avec Vulkan : environ 35 token/s, requête comprise, sur une tâche Ruby d'environ 500 tokens (31/10).
+Without `COLI_VULKAN=1`, everything stays on the CPU (8 token/s). With Vulkan: about 35 token/s, request included, on a Ruby task of about 500 tokens (31 October).
 
-Couper la réflexion dans l'appel API (`enable_thinking: false`), sinon le budget de tokens part dans le raisonnement et le code n'est pas émis.
+Turn thinking off in the API call (`enable_thinking: false`), or the token budget goes into reasoning and no code is emitted.
 
-Appel depuis une autre machine du réseau : envoyer `Host: 127.0.0.1`, ou lancer le serveur avec `--allowed-host` pour l'adresse IP. Colibri refuse l'en-tête Host de l'IP publique du LAN par défaut.
+Calling from another machine on the LAN: send `Host: 127.0.0.1`, or start the server with `--allowed-host` for the IP. By default Colibri rejects the Host header of the LAN address.
 
 ## Sources
 
