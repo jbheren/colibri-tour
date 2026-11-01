@@ -1,5 +1,9 @@
 # Colibri sur Windows
 
+Si vous utilisez un assistant de code, il peut faire l'installation. Demandez-lui :
+
+> Installe Colibri sur ce Windows en suivant https://raw.githubusercontent.com/jbheren/colibri-tour/main/skills/colibri-tour/SKILL.md
+
 Notes d'installation, pas un fork de Colibri. Deux cas :
 
 - une machine comme la tour de référence (RTX 3090 24 Go, 64 Go de RAM, SSD NVMe) : Qwen3.8-Flash-Next ;
@@ -10,8 +14,6 @@ Colibri v2.1.0 pour la tour. Le choix 16 Go vient du catalogue Colibri ([README]
 Ne pas committer de clé d'API. Le serveur refuse une écoute réseau sans clé.
 
 Colibri ne demande pas que le modèle tienne entier dans le GPU. La carte garde les experts chauds, la RAM les couches communes (ou, pour Qwen, les couches denses), le SSD les experts froids.
-
-Ne pas committer de clé d'API. Le serveur refuse une écoute réseau sans clé.
 
 ## Installer (les deux cas)
 
