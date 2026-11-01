@@ -13,7 +13,6 @@ Cette page est écrite pour l'assistant à qui l'on a demandé de l'exécuter. U
 - Ne pas inventer de clé d'API et ne pas en écrire dans un fichier. Pour un usage local, ne pas ouvrir le port.
 - Un seul modèle servi à la fois.
 - Si une commande s'arrête, la relancer : le téléchargement reprend.
-- Ne pas produire ni joindre un GIF de plus de 2 à 3 Mo. Un extrait court suffit.
 
 ## 1. Colibri
 
