@@ -16,22 +16,21 @@ Cette page est écrite pour l'assistant à qui l'on a demandé de l'exécuter. U
 
 ## 1. Colibri
 
-Dans PowerShell, dossier de travail de l'utilisateur :
+`START-HERE.bat` n'est pas dans l'archive Windows (`colibri-v*-windows-x86_64.zip`). Il n'existe que dans le code source. Sur une installation par release, le lanceur est `coli.cmd`, à côté de `colibri.exe`. Ne pas le chercher, ne pas le créer.
 
-```powershell
-py -3 --version
-git clone https://github.com/JustVugg/colibri
-cd colibri
-```
+S'il y a déjà un dossier avec `coli.cmd` (souvent `C:\Users\<utilisateur>\colibri`), l'utiliser. Sinon, télécharger la dernière release Windows depuis https://github.com/JustVugg/colibri/releases, vérifier `SHA256SUMS.txt`, la décompresser, et s'y placer. Ne pas cloner le dépôt source pour installer : ce n'est pas nécessaire, et ce n'est pas là que se trouve le binaire Windows.
 
-Si `py` manque, montrer `winget install -e --id Python.Python.3.12 --scope user` et ne le lancer qu'après un oui. Si `git` manque, le dire et s'arrêter.
+Si `py -3` manque, montrer `winget install -e --id Python.Python.3.12 --scope user` et ne le lancer qu'après un oui.
 
 ## 2. Ce que la machine peut tenir
 
+Depuis le dossier qui contient `coli.cmd` :
+
 ```powershell
-py -3 c\setup_hw.py --json
-py -3 c\coli setup --list --json
+coli.cmd setup --list --json
 ```
+
+Si cette forme échoue, la forme source est `py -3 c\coli setup --list --json`, uniquement dans un clone. Ne pas l'essayer sur une release.
 
 Lire `memory.total`. Dire à l'utilisateur le modèle retenu, sa taille, et pourquoi les autres sont écartés.
 
@@ -44,22 +43,22 @@ Lire `memory.total`. Dire à l'utilisateur le modèle retenu, sa taille, et pour
 Montrer l'identifiant, `download_gb` et le dossier (`~/colibri-models`, ou un autre disque via `--dir` si l'utilisateur le dit). Attendre un oui.
 
 ```powershell
-py -3 c\coli setup --model qwen3-coder-30b --yes
+coli.cmd setup --model qwen3-coder-30b
 ```
 
-Remplacer l'identifiant par celui retenu à l'étape 2. Ne pas ajouter `--yes` avant le oui de l'utilisateur : lancer d'abord la commande sans `--yes` si le setup pose encore la question, ou n'ajouter `--yes` qu'une fois l'accord donné.
+Remplacer l'identifiant par celui retenu à l'étape 2. N'ajouter `--yes` qu'après l'accord. Dans un clone source, la même commande est `py -3 c\coli setup --model <id>`.
 
-Le setup construit ou télécharge le moteur, télécharge le modèle, démarre Colibri et ouvre le tableau de bord.
+Le setup télécharge le modèle, démarre Colibri et ouvre le tableau de bord.
 
 Vérifier :
 
 ```powershell
-py -3 c\coli status
+coli.cmd status
 ```
 
 Le tableau de bord est `http://127.0.0.1:8000/`. La base OpenAI est `http://127.0.0.1:8000/v1`. Pour arrêter : `py -3 c\coli stop`, ou Ctrl+C dans la fenêtre qui a démarré le serveur.
 
-La fois suivante : `py -3 c\coli serve`, ou `START-HERE.bat` dans le dossier cloné.
+La fois suivante : `coli.cmd serve --model <dossier du modèle>`, depuis le même dossier.
 
 ## 4. Contrôle
 

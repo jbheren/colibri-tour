@@ -17,18 +17,18 @@ Colibri ne demande pas que le modèle tienne entier dans le GPU. La carte garde 
 
 ## Installer (les deux cas)
 
-1. Télécharger le ZIP du dépôt [colibri](https://github.com/JustVugg/colibri), le décompresser, double-cliquer sur `START-HERE.bat`. S'il manque Python, le script propose de l'installer.
-2. Avant tout téléchargement de modèle (plusieurs dizaines de Go), lancer `START-HERE.bat --list` et ne garder que ce qui tient dans la RAM et le disque.
-3. La fois suivante, `START-HERE.bat` relance sans retélécharger. `c\coli.cmd status` et `c\coli.cmd stop`.
+1. Release Windows sur https://github.com/JustVugg/colibri/releases : `colibri-v*-windows-x86_64.zip` (et l'archive `...-cuda.zip` par-dessus s'il y a une carte Nvidia). Vérifier `SHA256SUMS.txt`. Il n'y a pas de `START-HERE.bat` dans cette archive : le lanceur est `coli.cmd`.
+2. Avant tout téléchargement de modèle, `coli.cmd setup --list` et ne garder que ce qui tient.
+3. La fois suivante, `coli.cmd serve --model <dossier>`. `coli.cmd status` et `coli.cmd stop`.
 
-La tour de référence a été installée à la main, version épinglée, pas via `START-HERE.bat` : Python 3.12 (`winget install --id Python.Python.3.12 -e --scope user`), puis les archives `colibri-v2.1.0-windows-x86_64.zip` et `...-windows-x86_64-cuda.zip` (empreintes `SHA256SUMS.txt`) dans `C:\Users\jb\colibri`, puis `python -m pip install -U "huggingface_hub[hf_xet]"`.
+La tour de référence a été installée ainsi, version épinglée : Python 3.12 (`winget install --id Python.Python.3.12 -e --scope user`), puis les archives `colibri-v2.1.0-windows-x86_64.zip` et `...-windows-x86_64-cuda.zip` (empreintes `SHA256SUMS.txt`) dans `C:\Users\jb\colibri`, puis `python -m pip install -U "huggingface_hub[hf_xet]"`.
 
 ## PC 16 Go — Qwen3-Coder-30B-A3B
 
 Modèle de code et d'appels d'outils, sans réflexion. Identifiant : `qwen3-coder-30b`. Téléchargement 19 Go. Mesure publiée par Colibri, processeur seul, tous les experts en RAM : 8,5 à 9,6 token/s. Ce n'est pas la vitesse à attendre à 16 Go.
 
 ```bat
-START-HERE.bat --model qwen3-coder-30b
+coli.cmd setup --model qwen3-coder-30b
 ```
 
 Carte graphique facultative. Vulkan, y compris une puce intégrée, est pris en charge pour ce modèle. CUDA n'est pas nécessaire. Qwen3.6-35B-A3B (`qwen36-35b`, 23 Go, 10 / 20 Go de RAM) n'est le défaut que si `--list` le marque comme tenant « comme mesuré » ; sur 16 Go, non.
