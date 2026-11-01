@@ -1,6 +1,6 @@
 # Le local et le frontière
 
-Session filmée depuis un portable, l'agent parle à Colibri sur un PC Windows. Le GIF reprend la vidéo telle quelle, à 4 images par seconde pour tenir dans le dépôt. Durée d'origine : 1 min 58.
+Session filmée depuis un portable, l'agent parle à Colibri sur un PC Windows. Extrait de 12 secondes (à partir de 0:24), pas la vidéo entière. Un GIF joint ne doit pas dépasser 2 à 3 Mo.
 
 ![Qwen écrit du Ruby via Colibri](media/qwen-colibri.gif)
 
